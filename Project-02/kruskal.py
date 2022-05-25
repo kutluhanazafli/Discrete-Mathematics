@@ -30,8 +30,7 @@ class Graph:
         self.printSolution()
 
     def printSolution(self):
-
-        print('DONE')
+        pass
 
 class DisjointSet:
     def __init__(self, vertices):
@@ -97,10 +96,11 @@ G.addEdge("K", "L", 4)
 G.addEdge("H", "L", 2)
 G.kruskalAlgo()
 
+a=0
 for s,d,w in G.MST:
+    a += int(w)
     print(f'{s}-{d}: {w}')
-
-
+print(f'Minimum yayılan ağacın toplam ağırlığı: {a}')
 
 D = nx.Graph()
 
