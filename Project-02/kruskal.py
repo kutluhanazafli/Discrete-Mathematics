@@ -1,3 +1,6 @@
+import matplotlib.pyplot as plt
+import networkx as nx
+
 class Graph:
     def __init__(self, vertices):
         self.V = vertices
@@ -11,10 +14,24 @@ class Graph:
     def addNode(self, value):
         self.nodes.append(value)
 
-    def printSolution(self, s, d, w):
-        for s, d, w in self.MST:
-            print("%s - %s: %s" % (s, d, w))
+    def kruskalAlgo(self):
+        i, e = 0, 0
+        ds = DisjointSet(self.nodes)
+        self.graph = sorted(self.graph, key=lambda item: item[2])
+        while e < self.V - 1:
+            s, d, w = self.graph[i]
+            i += 1
+            x = ds.find(s)
+            y = ds.find(d)
+            if x != y:
+                e += 1
+                self.MST.append([s, d, w])
+                ds.union(x, y)
+        self.printSolution()
 
+    def printSolution(self):
+
+        print('DONE')
 
 class DisjointSet:
     def __init__(self, vertices):
@@ -40,23 +57,6 @@ class DisjointSet:
         else:
             self.parent[yroot] = xroot
             self.rank[xroot] += 1
-
-
-def kruskalAlgo(self):
-    i, e = 0, 0
-    ds = dst.DisjointSet(self.nodes)
-    self.graph = sorted(self.graph, key=lambda item: item[2])
-    while e < self.V - 1:
-        s, d, w = self.graph[i]
-        i += 1
-        x = ds.find(s)
-        y = ds.find(d)
-        if x != y:
-            e += 1
-            self.MST.append([s, d, w])
-            ds.union(x, y)
-    self.printSolution(s, d, w)
-
 
 G = Graph(12)
 G.addNode("A")
@@ -96,3 +96,42 @@ G.addEdge("G", "L", 2)
 G.addEdge("K", "L", 4)
 G.addEdge("H", "L", 2)
 G.kruskalAlgo()
+
+for s,d,w in G.MST:
+    print(f'{s}-{d}: {w}')
+
+
+
+D = nx.Graph()
+
+for i in G.nodes:
+    D.add_node(i)
+
+for s,d,w in G.MST:
+    D.add_edge(s,d, weight = w)
+
+elarge = [(u, v) for (u, v, d) in D.edges(data=True)]
+esmall = [(u, v) for (u, v, d) in D.edges(data=True)]
+
+pos = nx.spring_layout(D, seed=7)  # positions for all nodes - seed for reproducibility
+
+# nodes
+nx.draw_networkx_nodes(D, pos, node_size=700)
+
+# edges
+nx.draw_networkx_edges(D, pos, edgelist=elarge, width=6)
+nx.draw_networkx_edges(
+    D, pos, edgelist=esmall, width=6, alpha=0.5, edge_color="b", style="dashed"
+)
+
+# node labels
+nx.draw_networkx_labels(D, pos, font_size=20, font_family="sans-serif")
+# edge weight labels
+edge_labels = nx.get_edge_attributes(D, "weight")
+nx.draw_networkx_edge_labels(D, pos, edge_labels)
+
+ax = plt.gca()
+ax.margins(0.08)
+plt.axis("off")
+plt.tight_layout()
+plt.show()
