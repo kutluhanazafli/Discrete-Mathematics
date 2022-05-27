@@ -3,7 +3,6 @@ import string
 import matplotlib.pyplot as plt
 import networkx as nx
 
-
 class Graph():
     def __init__(self, vertices):
         self.V = vertices
@@ -20,7 +19,6 @@ class Graph():
             nodeNames += alphabet[i]
         self.nodes = list(nodeNames)
 
-        print(self.nodes)
         print("Edge \tWeight")
         for i in range(1, self.V):
             print(alphabet[parent[i]], "-", alphabet[i], "\t", self.graph[i][parent[i]])
@@ -47,6 +45,7 @@ class Graph():
         mstSet = [False] * self.V
 
         parent[0] = -1
+        alphabet = string.ascii_uppercase
 
         for cout in range(self.V):
 
@@ -59,6 +58,7 @@ class Graph():
                 if self.graph[u][v] > 0 and mstSet[v] == False and key[v] > self.graph[u][v]:
                     key[v] = self.graph[u][v]
                     parent[v] = u
+        print(f'Başlangıç Node: {alphabet[key[0]]}\n')
 
         self.printMST(parent)
 
@@ -69,10 +69,10 @@ g.graph = [[0, 3, 0, 0, 2, 4, 0, 0, 0, 0, 0, 0],  #a
            [0, 1, 0, 1, 0, 4, 1, 0, 0, 0, 0, 0],  #c
            [0, 0, 1, 0, 0, 0, 1, 5, 0, 0, 0, 0],  #d
            [2, 0, 0, 0, 0, 5, 0, 0, 1, 0, 0, 0],  #e
-           [4, 2, 4, 0, 5, 0, 3, 0, 1, 3, 0, 0],  #f
+           [4, 2, 4, 0, 5, 0, 3, 0, 6, 3, 0, 0],  #f
            [0, 0, 1, 1, 0, 3, 0, 5, 0, 3, 3, 2],  #g
            [0, 0, 0, 5, 0, 0, 5, 0, 0, 0, 0, 2],  #h
-           [0, 0, 0, 0, 1, 1, 0, 0, 0, 2, 0, 0],  #i
+           [0, 0, 0, 0, 1, 6, 0, 0, 0, 2, 0, 0],  #i
            [0, 0, 0, 0, 0, 3, 3, 0, 2, 0, 3, 0],  #j
            [0, 0, 0, 0, 0, 0, 3, 0, 0, 3, 0, 4],  #k
            [0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 4, 0]]  #l
@@ -114,7 +114,6 @@ elarge = [(u, v) for (u, v, d) in D.edges(data=True)]
 esmall = [(u, v) for (u, v, d) in D.edges(data=True)]
 
 pos = nx.spring_layout(D, seed=700)
-
 
 # nodes
 nx.draw_networkx_nodes(D, pos, node_size=400)
