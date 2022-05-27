@@ -1,26 +1,81 @@
+import sys
+import string
 import matplotlib.pyplot as plt
 import networkx as nx
 
-class Graph:
+
+class Graph():
     def __init__(self, vertices):
         self.V = vertices
-        self.graph = []
-        self.nodes = []
-        self.MST = []
+        self.graph = [[0 for column in range(vertices)]
+                      for row in range(vertices)]
 
-    def addEdge(self, s, d, w):
-        self.graph.append([s, d, w])
+    def printMST(self, parent):
 
-    def addNode(self, value):
-        self.nodes.append(value)
+        self.way = list()
+        alphabet = string.ascii_uppercase
+        totalWeight = 0
+        nodeNames = ''
+        for i in range(self.V):
+            nodeNames += alphabet[i]
+        self.nodes = list(nodeNames)
 
-    def kruskalAlgo(self):
-        pass
-        # Buraya Prim Algoritmasnı yerleştirsen yeterli
-        self.printSolution()
+        print(self.nodes)
+        print("Edge \tWeight")
+        for i in range(1, self.V):
+            print(alphabet[parent[i]], "-", alphabet[i], "\t", self.graph[i][parent[i]])
+            self.way.append([alphabet[parent[i]], alphabet[i], self.graph[i][parent[i]]])
+            totalWeight += self.graph[i][parent[i]]
+        print(f'Minimum yayılan ağacın toplam ağırlığı: {totalWeight}')
 
-    def printSolution(self):
-        pass
+    def minKey(self, key, mstSet):
+
+        min = sys.maxsize
+
+        for v in range(self.V):
+            if key[v] < min and mstSet[v] == False:
+                min = key[v]
+                min_index = v
+        return min_index
+
+    def primMST(self):
+
+        key = [sys.maxsize] * self.V
+        parent = [None] * self.V
+
+        key[0] = 0
+        mstSet = [False] * self.V
+
+        parent[0] = -1
+
+        for cout in range(self.V):
+
+            u = self.minKey(key, mstSet)
+
+            mstSet[u] = True
+
+            for v in range(self.V):
+
+                if self.graph[u][v] > 0 and mstSet[v] == False and key[v] > self.graph[u][v]:
+                    key[v] = self.graph[u][v]
+                    parent[v] = u
+
+        self.printMST(parent)
+
+g = Graph(12)
+          # a  b  c  d  e  f  g  h  i  j  k  l
+g.graph = [[0, 3, 0, 0, 2, 4, 0, 0, 0, 0, 0, 0],  #a
+           [3, 0, 1, 0, 0, 2, 0, 0, 0, 0, 0, 0],  #b
+           [0, 1, 0, 1, 0, 4, 1, 0, 0, 0, 0, 0],  #c
+           [0, 0, 1, 0, 0, 0, 1, 5, 0, 0, 0, 0],  #d
+           [2, 0, 0, 0, 0, 5, 0, 0, 1, 0, 0, 0],  #e
+           [4, 2, 4, 0, 5, 0, 3, 0, 1, 3, 0, 0],  #f
+           [0, 0, 1, 1, 0, 3, 0, 5, 0, 3, 3, 2],  #g
+           [0, 0, 0, 5, 0, 0, 5, 0, 0, 0, 0, 2],  #h
+           [0, 0, 0, 0, 1, 1, 0, 0, 0, 2, 0, 0],  #i
+           [0, 0, 0, 0, 0, 3, 3, 0, 2, 0, 3, 0],  #j
+           [0, 0, 0, 0, 0, 0, 3, 0, 0, 3, 0, 4],  #k
+           [0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 4, 0]]  #l
 
 class DisjointSet:
     def __init__(self, vertices):
@@ -47,72 +102,26 @@ class DisjointSet:
             self.parent[yroot] = xroot
             self.rank[xroot] += 1
 
-G = Graph(12)
-G.addNode("A")
-G.addNode("B")
-G.addNode("C")
-G.addNode("D")
-G.addNode("E")
-G.addNode("F")
-G.addNode("G")
-G.addNode("H")
-G.addNode("I")
-G.addNode("J")
-G.addNode("K")
-G.addNode("L")
-G.addEdge("A", "B", 3)
-G.addEdge("B", "C", 1)
-G.addEdge("C", "D", 1)
-G.addEdge("A", "E", 2)
-G.addEdge("A", "F", 4)
-G.addEdge("B", "F", 2)
-G.addEdge("C", "F", 4)
-G.addEdge("C", "G", 1)
-G.addEdge("D", "G", 1)
-G.addEdge("D", "H", 5)
-G.addEdge("E", "F", 5)
-G.addEdge("F", "G", 3)
-G.addEdge("G", "H", 5)
-G.addEdge("E", "I", 1)
-G.addEdge("F", "I", 6)
-G.addEdge("F", "J", 3)
-G.addEdge("I", "J", 2)
-G.addEdge("G", "J", 3)
-G.addEdge("G", "K", 3)
-G.addEdge("J", "K", 3)
-G.addEdge("G", "L", 2)
-G.addEdge("G", "L", 2)
-G.addEdge("K", "L", 4)
-G.addEdge("H", "L", 2)
-G.kruskalAlgo()
-
-a=0
-for s,d,w in G.MST:
-    a += int(w)
-    print(f'{s}-{d}: {w}')
-print(f'Minimum yayılan ağacın toplam ağırlığı: {a}')
+g.primMST()
 
 D = nx.Graph()
+D.add_nodes_from(g.nodes)
 
-for i in G.nodes:
-    D.add_node(i)
-
-for s,d,w in G.MST:
-    D.add_edge(s,d, weight = w)
+for i in g.way:
+    D.add_edge(i[0], i[1], weight = i[2])
 
 elarge = [(u, v) for (u, v, d) in D.edges(data=True)]
 esmall = [(u, v) for (u, v, d) in D.edges(data=True)]
 
-pos = nx.spring_layout(D, seed=7)  # positions for all nodes - seed for reproducibility
+pos = nx.spring_layout(D, seed=700)
+
 
 # nodes
-nx.draw_networkx_nodes(D, pos, node_size=700)
+nx.draw_networkx_nodes(D, pos, node_size=400)
 
 # edges
 nx.draw_networkx_edges(D, pos, edgelist=elarge, width=6)
-nx.draw_networkx_edges(
-    D, pos, edgelist=esmall, width=6, alpha=0.5, edge_color="b", style="dashed"
-)
+nx.draw_networkx_edges(D, pos, edgelist=esmall, width=6, alpha=0.5, edge_color="b", style="dashed")
 
 # node labels
 nx.draw_networkx_labels(D, pos, font_size=20, font_family="sans-serif")
